@@ -30,7 +30,7 @@ public class StickApplication extends Application {
         if (tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            tracker = analytics.newTracker("UA-74126937-1");
+            tracker = analytics.newTracker("UA-74126937-2");
         }
         return tracker;
     }

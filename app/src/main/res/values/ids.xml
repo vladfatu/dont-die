@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_id">724927267050</string>
-    <string name="package_name">com.tacticsgames.dontstickaround</string>
+    <string name="app_id">966803293125</string>
+    <string name="package_name">com.tacticsgames.dontdie</string>
 
-    <string name="achievement_first_blood">CgkI6oGhyIwVEAIQAg</string>
-    <string name="achievement_total_score_1000">CgkI6oGhyIwVEAIQAw</string>
-    <string name="achievement_third">CgkI6oGhyIwVEAIQBA</string>
-    <string name="achievement_forth">CgkI6oGhyIwVEAIQBQ</string>
-    <string name="achievement_fifth">CgkI6oGhyIwVEAIQBg</string>
+    <string name="achievement_first_blood">CgkIxYfez5EcEAIQAg</string>
+    <string name="achievement_total_score_1000">CgkIxYfez5EcEAIQAw</string>
+    <string name="achievement_third">CgkIxYfez5EcEAIQBA</string>
+    <string name="achievement_forth">CgkIxYfez5EcEAIQBQ</string>
+    <string name="achievement_fifth">CgkIxYfez5EcEAIQBg</string>
 
-    <string name="leaderboard_best_score">CgkI6oGhyIwVEAIQAA</string>
+    <string name="leaderboard_best_score">CgkIxYfez5EcEAIQCQ</string>
 
-    <string name="event_games_played">CgkI6oGhyIwVEAIQCQ</string>
-    <string name="event_total_score">CgkI6oGhyIwVEAIQCg</string>
+    <string name="event_games_played">CgkIxYfez5EcEAIQBw</string>
+    <string name="event_total_score">CgkIxYfez5EcEAIQCA</string>
 
     <string name="analytics_category_action">Action</string>
 
