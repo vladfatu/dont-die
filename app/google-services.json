@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_id": "dont-die-58705058",
+    "project_number": "966803293125",
+    "name": "Dont Die"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966803293125:android:339c74f05ca3b76d",
+        "client_id": "android:com.tacticsgames.dontdie",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.tacticsgames.dontdie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966803293125-td36fkpmdo5udusumo73gb01h5s1h3cj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tacticsgames.dontdie",
+            "certificate_hash": "54EC3DA554CD0EDC241EC2AAD312CB39054F5C0B"
+          }
+        },
+        {
+          "client_id": "966803293125-7cvk9d7c378ake4vc8jtmuupkffkinvs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tacticsgames.dontdie",
+            "certificate_hash": "D89BAB7FBEF127DDE99F2331A38367C7772C7466"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-74126937-2"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
