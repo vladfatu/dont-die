@@ -1,10 +1,7 @@
 package com.tacticsgames.dontdie;
 
-import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +16,11 @@ import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class GameActivity extends PlayServicesActivity {
 
     private static final int JUMP_LENGTH = 50;
-    private static final int OBSTACLE_COUNT = 10;
+    private static final int WEAPON_COUNT = 10;
 
     private InterstitialAd mInterstitialAd;
 
@@ -37,7 +33,8 @@ public class GameActivity extends PlayServicesActivity {
     private int bottomInPixels;
     private int passedObstacles;
 
-    private Map<Integer, View> obstacles;
+    private Map<Integer, Weapon> weaponMap;
+    private WeaponGenerator weaponGenerator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +50,8 @@ public class GameActivity extends PlayServicesActivity {
         gameOverLayout = findViewById(R.id.gameOverLayout);
         gameOverScore = TextView.class.cast(findViewById(R.id.gameOverScore));
 
-        initialiseObstacles();
+        weaponGenerator = new WeaponGenerator();
+        initialiseWeapons();
         startObstacles();
     }
 
@@ -84,33 +82,29 @@ public class GameActivity extends PlayServicesActivity {
         gameOverLayout.setVisibility(View.GONE);
         gameOver = false;
         passedObstacles = 0;
-        startObstacleAnimations();
+        startWeaponAnimations();
     }
 
-    private void initialiseObstacles() {
-        obstacles = new HashMap<>();
-        for (int i=0; i<OBSTACLE_COUNT; i++) {
-            View obstacleView = getObstacleView();
-            obstacles.put(i, obstacleView);
-            gameLayout.addView(obstacleView);
+    private void initialiseWeapons() {
+        weaponMap = new HashMap<>();
+        for (int i=0; i< WEAPON_COUNT; i++) {
+            Weapon weapon = weaponGenerator.generateWeapon(this);
+            weaponMap.put(i, weapon);
+            gameLayout.addView(weapon.getView());
         }
     }
 
-    private void startObstacleAnimations() {
-        for (int i=0; i<OBSTACLE_COUNT; i++) {
-            startObstacleAnimation(i);
+    private void startWeaponAnimations() {
+        for (int i=0; i< WEAPON_COUNT; i++) {
+            startWeaponAnimation(i);
         }
     }
 
-    private void startObstacleAnimation(final int id) {
-        Random random = new Random();
-        View obstacle = obstacles.get(id);
-        ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(obstacle.getLayoutParams());
-        params.rightMargin = 0;
-        params.bottomMargin = random.nextInt(900);
-        obstacle.setLayoutParams(params);
-        Animation a = new TranslateXAnimation(obstacle, getScreenWidth());
-        a.setDuration((int)(getDpFromPixels(getScreenWidth()) * 10 / (1 + (random.nextFloat()*3))));
+    private void startWeaponAnimation(final int id) {
+        Weapon weapon = weaponMap.get(id);
+        weaponGenerator.randomizeWeapon(this, weapon, getScreenWidth());
+        Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth());
+        a.setDuration(weapon.getAnimationDuration());
         a.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -119,8 +113,8 @@ public class GameActivity extends PlayServicesActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                if (! gameOver) {
-                    startObstacleAnimation(id);
+                if (!gameOver) {
+                    startWeaponAnimation(id);
                     passedObstacles++;
                 }
             }
@@ -130,24 +124,11 @@ public class GameActivity extends PlayServicesActivity {
 
             }
         });
-        obstacle.startAnimation(a);
-    }
-
-    private View getObstacleView() {
-        ImageView obstacle = new ImageView(this);
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        obstacle.setLayoutParams(layoutParams);
-
-        obstacle.setImageResource(R.drawable.circle);
-        return obstacle;
+        weapon.getView().startAnimation(a);
     }
 
     private void translateImageUpWithAnimation() {
-        Animation a = new TranslateYAnimation(circleImage, getPixelsFromDp(JUMP_LENGTH));
+        Animation a = new TranslateYAnimation(circleImage, PixelConverter.getPixelsFromDp(this, JUMP_LENGTH));
         a.setDuration(JUMP_LENGTH * 5);
         a.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -170,7 +151,7 @@ public class GameActivity extends PlayServicesActivity {
 
     private void translateImageDownWithAnimation() {
         Animation a = new TranslateYAnimation(circleImage, -bottomInPixels);
-        a.setDuration(getDpFromPixels(bottomInPixels) * 10);
+        a.setDuration(PixelConverter.getDpFromPixels(this, bottomInPixels) * 10);
         circleImage.startAnimation(a);
     }
 
@@ -180,30 +161,6 @@ public class GameActivity extends PlayServicesActivity {
 
     public void onRetryClicked(View view) {
         startObstacles();
-    }
-
-    private void translateImageWithLayout() {
-        bottomInPixels += getPixelsFromDp(20);
-        ViewGroup.MarginLayoutParams layoutParams = ViewGroup.MarginLayoutParams.class.cast(circleImage.getLayoutParams());
-        layoutParams.setMargins(layoutParams.leftMargin, 0, 0, bottomInPixels);
-        circleImage.setLayoutParams(layoutParams);
-    }
-
-    private int getPixelsFromDp(int dp) {
-        Resources r = getResources();
-        int px = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                dp,
-                r.getDisplayMetrics()
-        );
-        return px;
-    }
-
-    private int getDpFromPixels(int pixels) {
-        Resources resources = getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = pixels / (metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        return (int) dp;
     }
 
     private int getScreenWidth() {
@@ -265,7 +222,7 @@ public class GameActivity extends PlayServicesActivity {
             ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(targetView.getLayoutParams());
             params.rightMargin = (int) (rightMargin * interpolatedTime);
             targetView.setLayoutParams(params);
-            if (CollisionChecker.areViewsColliding(circleImage, targetView, getPixelsFromDp(5))) {
+            if (CollisionChecker.areViewsColliding(circleImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
                 showGameOver();
             }
         }
