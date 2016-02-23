@@ -5,3 +5,8 @@
 .DS_Store
 /build
 /captures
+vcs.xml
+gradle.xml
+compiler.xml
+dont-die.iml
+misc.xml
