@@ -5,6 +5,17 @@ package com.tacticsgames.dontdie;
  */
 public enum WeaponType {
 
-    KUNAI,
-    NINJA_STAR;
+    KUNAI(R.mipmap.kunai),
+//    SHURIKEN(R.mipmap.shuriken),
+    NINJA_STAR(R.mipmap.shuriken);
+
+    private int imageId;
+
+    WeaponType(int imageId) {
+        this.imageId = imageId;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
 }

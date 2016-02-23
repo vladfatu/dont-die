@@ -44,7 +44,7 @@ public class WeaponGenerator {
         return WeaponType.values()[random.nextInt(WeaponType.values().length)];
     }
 
-    private View generateWeaponView(Context context) {
+    private ImageView generateWeaponView(Context context) {
         ImageView weapon = new ImageView(context);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -53,7 +53,6 @@ public class WeaponGenerator {
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         weapon.setLayoutParams(layoutParams);
 
-        weapon.setImageResource(R.drawable.circle);
         return weapon;
     }
 

@@ -1,11 +1,15 @@
 package com.tacticsgames.dontdie;
 
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -103,7 +107,28 @@ public class GameActivity extends PlayServicesActivity {
     private void startWeaponAnimation(final int id) {
         Weapon weapon = weaponMap.get(id);
         weaponGenerator.randomizeWeapon(this, weapon, getScreenWidth());
-        Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth());
+        rotate(weapon.getView(), 0);
+
+//        AnimationSet animationSet = new AnimationSet(true);
+//
+//        if (weapon.getWeaponType() == WeaponType.NINJA_STAR) {
+//            weapon.getView().setDrawingCacheEnabled(true);
+//            RotateAnimation anim = new RotateAnimation(360.0f, 1.0f,
+//                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+//                    0.5f);
+//
+//            // Step 3: Start animating the image
+////            weapon.getView().startAnimation(anim);
+//            animationSet.addAnimation(anim);
+//
+//            // Step 2:  Set the Animation properties
+//            anim.setInterpolator(new LinearInterpolator());
+//            anim.setRepeatCount(Animation.INFINITE);
+//            anim.setDuration(800);
+//        }
+
+        boolean rotate = weapon.getWeaponType() == WeaponType.NINJA_STAR;
+        Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth(), rotate);
         a.setDuration(weapon.getAnimationDuration());
         a.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -124,7 +149,9 @@ public class GameActivity extends PlayServicesActivity {
 
             }
         });
+//        animationSet.addAnimation(a);
         weapon.getView().startAnimation(a);
+
     }
 
     private void translateImageUpWithAnimation() {
@@ -184,6 +211,13 @@ public class GameActivity extends PlayServicesActivity {
         }
     }
 
+    private void rotate(ImageView targetView, float angle) {
+        Matrix matrix = new Matrix();
+        targetView.setScaleType(ImageView.ScaleType.MATRIX);
+        matrix.postRotate(angle, targetView.getDrawable().getBounds().width() / 2, targetView.getDrawable().getBounds().height() / 2);
+        targetView.setImageMatrix(matrix);
+    }
+
     private class TranslateYAnimation extends Animation {
 
         private int initialMargin;
@@ -209,12 +243,14 @@ public class GameActivity extends PlayServicesActivity {
     private class TranslateXAnimation extends Animation {
 
         private int rightMargin;
-        private View targetView;
+        private ImageView targetView;
+        private boolean rotate;
 
-        public TranslateXAnimation(View targetView, int rightMargin) {
+        public TranslateXAnimation(ImageView targetView, int rightMargin, boolean rotate) {
             super();
             this.rightMargin = rightMargin;
             this.targetView = targetView;
+            this.rotate = rotate;
         }
 
         @Override
@@ -222,6 +258,12 @@ public class GameActivity extends PlayServicesActivity {
             ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(targetView.getLayoutParams());
             params.rightMargin = (int) (rightMargin * interpolatedTime);
             targetView.setLayoutParams(params);
+
+            if (rotate) {
+                float angle = 360 * 7 * (1 - interpolatedTime);
+                rotate(targetView, angle);
+            }
+
             if (CollisionChecker.areViewsColliding(circleImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
                 showGameOver();
             }

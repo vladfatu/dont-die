@@ -1,6 +1,6 @@
 package com.tacticsgames.dontdie;
 
-import android.view.View;
+import android.widget.ImageView;
 
 /**
  * Created by vladfatu on 23/02/2016.
@@ -8,10 +8,10 @@ import android.view.View;
 public class Weapon {
 
     private WeaponType weaponType;
-    private View view;
+    private ImageView view;
     private int animationDuration;
 
-    public Weapon(View view) {
+    public Weapon(ImageView view) {
         this.view = view;
     }
 
@@ -21,13 +21,14 @@ public class Weapon {
 
     public void setWeaponType(WeaponType weaponType) {
         this.weaponType = weaponType;
+        view.setImageResource(weaponType.getImageId());
     }
 
-    public View getView() {
+    public ImageView getView() {
         return view;
     }
 
-    public void setView(View view) {
+    public void setView(ImageView view) {
         this.view = view;
     }
 
