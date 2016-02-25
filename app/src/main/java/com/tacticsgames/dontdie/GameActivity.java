@@ -7,9 +7,6 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -28,7 +25,8 @@ public class GameActivity extends PlayServicesActivity {
 
     private InterstitialAd mInterstitialAd;
 
-    private ImageView circleImage;
+    private ImageView penguinImage;
+    private View spikesLayout;
     private View gameOverLayout;
     private TextView gameOverScore;
     private RelativeLayout gameLayout;
@@ -50,9 +48,10 @@ public class GameActivity extends PlayServicesActivity {
         requestNewInterstitial();
 
         gameLayout = RelativeLayout.class.cast(findViewById(R.id.game_content));
-        circleImage = ImageView.class.cast(findViewById(R.id.circleImage));
+        penguinImage = ImageView.class.cast(findViewById(R.id.circleImage));
         gameOverLayout = findViewById(R.id.gameOverLayout);
         gameOverScore = TextView.class.cast(findViewById(R.id.gameOverScore));
+        spikesLayout = findViewById(R.id.spikesLayout);
 
         weaponGenerator = new WeaponGenerator();
         initialiseWeapons();
@@ -67,6 +66,7 @@ public class GameActivity extends PlayServicesActivity {
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("A9A71D5CD236AB4E5565199A22CB660D")
+                .addTestDevice("9C9C6C29924B4A4870047BD11841E1AF")
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
@@ -84,6 +84,7 @@ public class GameActivity extends PlayServicesActivity {
 
     private void startObstacles(){
         gameOverLayout.setVisibility(View.GONE);
+        rotate(penguinImage, 0);
         gameOver = false;
         passedObstacles = 0;
         startWeaponAnimations();
@@ -108,24 +109,6 @@ public class GameActivity extends PlayServicesActivity {
         Weapon weapon = weaponMap.get(id);
         weaponGenerator.randomizeWeapon(this, weapon, getScreenWidth());
         rotate(weapon.getView(), 0);
-
-//        AnimationSet animationSet = new AnimationSet(true);
-//
-//        if (weapon.getWeaponType() == WeaponType.NINJA_STAR) {
-//            weapon.getView().setDrawingCacheEnabled(true);
-//            RotateAnimation anim = new RotateAnimation(360.0f, 1.0f,
-//                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-//                    0.5f);
-//
-//            // Step 3: Start animating the image
-////            weapon.getView().startAnimation(anim);
-//            animationSet.addAnimation(anim);
-//
-//            // Step 2:  Set the Animation properties
-//            anim.setInterpolator(new LinearInterpolator());
-//            anim.setRepeatCount(Animation.INFINITE);
-//            anim.setDuration(800);
-//        }
 
         boolean rotate = weapon.getWeaponType() == WeaponType.NINJA_STAR;
         Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth(), rotate);
@@ -155,7 +138,7 @@ public class GameActivity extends PlayServicesActivity {
     }
 
     private void translateImageUpWithAnimation() {
-        Animation a = new TranslateYAnimation(circleImage, PixelConverter.getPixelsFromDp(this, JUMP_LENGTH));
+        Animation a = new TranslateYAnimation(penguinImage, PixelConverter.getPixelsFromDp(this, JUMP_LENGTH), false);
         a.setDuration(JUMP_LENGTH * 5);
         a.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -173,13 +156,19 @@ public class GameActivity extends PlayServicesActivity {
 
             }
         });
-        circleImage.startAnimation(a);
+        penguinImage.startAnimation(a);
     }
 
     private void translateImageDownWithAnimation() {
-        Animation a = new TranslateYAnimation(circleImage, -bottomInPixels);
+        Animation a = new TranslateYAnimation(penguinImage, -bottomInPixels, false);
         a.setDuration(PixelConverter.getDpFromPixels(this, bottomInPixels) * 10);
-        circleImage.startAnimation(a);
+        penguinImage.startAnimation(a);
+    }
+
+    private void translateImageFallWithAnimation() {
+        Animation a = new TranslateYAnimation(penguinImage, -bottomInPixels, true);
+        a.setDuration(PixelConverter.getDpFromPixels(this, bottomInPixels) * 10 / 5);
+        penguinImage.startAnimation(a);
     }
 
     public void onLayoutClick(View view) {
@@ -199,6 +188,7 @@ public class GameActivity extends PlayServicesActivity {
 
     private void showGameOver() {
         if (!gameOver) {
+            translateImageFallWithAnimation();
             showAd();
             gameOver = true;
             unlockAchievement(R.string.achievement_first_blood);
@@ -222,13 +212,15 @@ public class GameActivity extends PlayServicesActivity {
 
         private int initialMargin;
         private int bottomMarginDelta;
-        private View targetView;
+        private ImageView targetView;
+        private boolean rotate;
 
-        public TranslateYAnimation(View targetView, int bottomMarginDelta) {
+        public TranslateYAnimation(ImageView targetView, int bottomMarginDelta, boolean rotate) {
             super();
             this.bottomMarginDelta = bottomMarginDelta;
             this.targetView = targetView;
             this.initialMargin = ViewGroup.MarginLayoutParams.class.cast(targetView.getLayoutParams()).bottomMargin;
+            this.rotate = rotate;
         }
 
         @Override
@@ -237,6 +229,15 @@ public class GameActivity extends PlayServicesActivity {
             bottomInPixels = initialMargin + (int) (bottomMarginDelta * interpolatedTime);
             params.bottomMargin = bottomInPixels;
             targetView.setLayoutParams(params);
+
+            if (rotate) {
+                float angle = 90 * interpolatedTime;
+                rotate(targetView, angle);
+            }
+
+            if (CollisionChecker.areViewsColliding(targetView, spikesLayout, PixelConverter.getPixelsFromDp(GameActivity.this, 1))) {
+                showGameOver();
+            }
         }
     }
 
@@ -264,7 +265,7 @@ public class GameActivity extends PlayServicesActivity {
                 rotate(targetView, angle);
             }
 
-            if (CollisionChecker.areViewsColliding(circleImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
+            if (CollisionChecker.areViewsColliding(penguinImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
                 showGameOver();
             }
         }

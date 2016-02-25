@@ -2,22 +2,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context="com.tacticsgames.dontstickaround.GameActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/game_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_margin="10dp"
+        android:background="#ebf4fa"
         android:onClick="onLayoutClick">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/spikesLayout"
+            android:background="@drawable/spike_background"
+            android:layout_alignParentTop="true"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/circleImage"
-            android:src="@drawable/circle"
+            android:src="@mipmap/penguin"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="50dp"/>
+            android:layout_marginLeft="70dp"/>
 
     </RelativeLayout>
 
