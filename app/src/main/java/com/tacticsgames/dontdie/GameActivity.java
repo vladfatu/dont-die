@@ -30,6 +30,7 @@ public class GameActivity extends PlayServicesActivity {
     private View gameOverLayout;
     private TextView gameOverScore;
     private RelativeLayout gameLayout;
+    private TextView gameOverMessage;
     private boolean gameOver;
 
     private int bottomInPixels;
@@ -37,6 +38,8 @@ public class GameActivity extends PlayServicesActivity {
 
     private Map<Integer, Weapon> weaponMap;
     private WeaponGenerator weaponGenerator;
+    private InsultPicker insultPicker;
+    private int gameCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,9 @@ public class GameActivity extends PlayServicesActivity {
         gameOverLayout = findViewById(R.id.gameOverLayout);
         gameOverScore = TextView.class.cast(findViewById(R.id.gameOverScore));
         spikesLayout = findViewById(R.id.spikesLayout);
+        gameOverMessage = TextView.class.cast(findViewById(R.id.gameOverMessage));
 
+        insultPicker = new InsultPicker();
         weaponGenerator = new WeaponGenerator();
         initialiseWeapons();
         startObstacles();
@@ -189,8 +194,12 @@ public class GameActivity extends PlayServicesActivity {
     private void showGameOver() {
         if (!gameOver) {
             translateImageFallWithAnimation();
-            showAd();
             gameOver = true;
+            gameCount++;
+            showInsult();
+            if (gameCount % 5 == 0) {
+                showAd();
+            }
             unlockAchievement(R.string.achievement_first_blood);
             submitScoreToLeaderBoard(R.string.leaderboard_best_score, passedObstacles);
             submitEvent(R.string.event_games_played, 1);
@@ -199,6 +208,10 @@ public class GameActivity extends PlayServicesActivity {
             gameOverScore.setText(Integer.toString(passedObstacles));
             gameOverLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void showInsult() {
+        gameOverMessage.setText(insultPicker.pickInsult(gameCount));
     }
 
     private void rotate(ImageView targetView, float angle) {
