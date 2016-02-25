@@ -2,10 +2,12 @@ package com.tacticsgames.dontdie;
 
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageView;
@@ -31,6 +33,9 @@ public class GameActivity extends PlayServicesActivity {
     private TextView gameOverScore;
     private RelativeLayout gameLayout;
     private TextView gameOverMessage;
+    private TextView startGameCounterView;
+    private View leftLayout;
+    private int startGameCounter;
     private boolean gameOver;
 
     private int bottomInPixels;
@@ -56,11 +61,13 @@ public class GameActivity extends PlayServicesActivity {
         gameOverScore = TextView.class.cast(findViewById(R.id.gameOverScore));
         spikesLayout = findViewById(R.id.spikesLayout);
         gameOverMessage = TextView.class.cast(findViewById(R.id.gameOverMessage));
+        startGameCounterView = TextView.class.cast(findViewById(R.id.startGameCounter));
+        leftLayout = findViewById(R.id.leftLayout);
 
         insultPicker = new InsultPicker();
         weaponGenerator = new WeaponGenerator();
         initialiseWeapons();
-        startObstacles();
+        startGame();
     }
 
     private void setupAd() {
@@ -87,25 +94,63 @@ public class GameActivity extends PlayServicesActivity {
         return getLocalClassName();
     }
 
-    private void startObstacles(){
+    private void startGame() {
         gameOverLayout.setVisibility(View.GONE);
+        startGameCounterView.setVisibility(View.VISIBLE);
         rotate(penguinImage, 0);
-        gameOver = false;
         passedObstacles = 0;
-        startWeaponAnimations();
+        startGameCounterView.setText("3");
+        startGameCounter = 3;
+        makeWeaponsInvisible();
+        showStartGameCounterAnimation();
+    }
+
+    private void showStartGameCounterAnimation() {
+        Animation fadeIn = new AlphaAnimation(0, 1);
+        fadeIn.setDuration(1000);
+        fadeIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (startGameCounter <= 0) {
+                    startGameCounterView.setVisibility(View.GONE);
+                } else if (startGameCounter == 1) {
+                    startWeaponAnimations();
+                    startGameCounter--;
+                    startGameCounterView.setText(R.string.go);
+                    showStartGameCounterAnimation();
+                } else {
+                    startGameCounter--;
+                    startGameCounterView.setText(Integer.toString(startGameCounter));
+                    showStartGameCounterAnimation();
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        startGameCounterView.startAnimation(fadeIn);
     }
 
     private void initialiseWeapons() {
         weaponMap = new HashMap<>();
-        for (int i=0; i< WEAPON_COUNT; i++) {
+        for (int i = 0; i < WEAPON_COUNT; i++) {
             Weapon weapon = weaponGenerator.generateWeapon(this);
             weaponMap.put(i, weapon);
             gameLayout.addView(weapon.getView());
         }
+        leftLayout.bringToFront();
     }
 
     private void startWeaponAnimations() {
-        for (int i=0; i< WEAPON_COUNT; i++) {
+        gameOver = false;
+        for (int i = 0; i < WEAPON_COUNT; i++) {
             startWeaponAnimation(i);
         }
     }
@@ -114,6 +159,7 @@ public class GameActivity extends PlayServicesActivity {
         Weapon weapon = weaponMap.get(id);
         weaponGenerator.randomizeWeapon(this, weapon, getScreenWidth());
         rotate(weapon.getView(), 0);
+        setAlpha(weapon.getView(), 255);
 
         boolean rotate = weapon.getWeaponType() == WeaponType.NINJA_STAR;
         Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth(), rotate);
@@ -140,6 +186,20 @@ public class GameActivity extends PlayServicesActivity {
 //        animationSet.addAnimation(a);
         weapon.getView().startAnimation(a);
 
+    }
+
+    private void makeWeaponsInvisible() {
+        for (int i = 0; i < WEAPON_COUNT; i++) {
+            setAlpha(weaponMap.get(i).getView(), 0);
+        }
+    }
+
+    private void setAlpha(ImageView imageView, int alpha) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            imageView.setImageAlpha(alpha);
+        } else {
+            imageView.setAlpha(alpha);
+        }
     }
 
     private void translateImageUpWithAnimation() {
@@ -181,7 +241,7 @@ public class GameActivity extends PlayServicesActivity {
     }
 
     public void onRetryClicked(View view) {
-        startObstacles();
+        startGame();
     }
 
     private int getScreenWidth() {
@@ -269,17 +329,19 @@ public class GameActivity extends PlayServicesActivity {
 
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
-            ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(targetView.getLayoutParams());
-            params.rightMargin = (int) (rightMargin * interpolatedTime);
-            targetView.setLayoutParams(params);
+            if (targetView.getLeft() > PixelConverter.getPixelsFromDp(GameActivity.this, 3)) {
+                ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(targetView.getLayoutParams());
+                params.rightMargin = (int) (rightMargin * interpolatedTime);
+                targetView.setLayoutParams(params);
 
-            if (rotate) {
-                float angle = 360 * 7 * (1 - interpolatedTime);
-                rotate(targetView, angle);
-            }
+                if (rotate) {
+                    float angle = 360 * 7 * (1 - interpolatedTime);
+                    rotate(targetView, angle);
+                }
 
-            if (CollisionChecker.areViewsColliding(penguinImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
-                showGameOver();
+                if (CollisionChecker.areViewsColliding(penguinImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
+                    showGameOver();
+                }
             }
         }
     }
