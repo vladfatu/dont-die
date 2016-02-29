@@ -4,10 +4,20 @@
     <string name="package_name">com.tacticsgames.dontdie</string>
 
     <string name="achievement_first_blood">CgkIxYfez5EcEAIQAg</string>
+    <string name="achievement_killed_by_a_kunai">CgkIxYfez5EcEAIQEA</string>
+    <string name="achievement_killed_by_a_ninja_star">CgkIxYfez5EcEAIQEQ</string>
+    <string name="achievement_killed_by_spikes">CgkIxYfez5EcEAIQEg</string>
+    <string name="achievement_died_50_times">CgkIxYfez5EcEAIQBA</string>
+    <string name="achievement_died_100_times">CgkIxYfez5EcEAIQBQ</string>
+    <string name="achievement_died_1000_times">CgkIxYfez5EcEAIQBg</string>
+    <string name="achievement_die_hard_25">CgkIxYfez5EcEAIQCw</string>
+    <string name="achievement_die_hard_50">CgkIxYfez5EcEAIQDA</string>
+    <string name="achievement_die_hard_100">CgkIxYfez5EcEAIQDQ</string>
+    <string name="achievement_die_hard_250">CgkIxYfez5EcEAIQDg</string>
+    <string name="achievement_die_hard_500">CgkIxYfez5EcEAIQDw</string>
+    <string name="achievement_die_hard_1000">CgkIxYfez5EcEAIQEw</string>
     <string name="achievement_total_score_1000">CgkIxYfez5EcEAIQAw</string>
-    <string name="achievement_third">CgkIxYfez5EcEAIQBA</string>
-    <string name="achievement_forth">CgkIxYfez5EcEAIQBQ</string>
-    <string name="achievement_fifth">CgkIxYfez5EcEAIQBg</string>
+    <string name="achievement_total_score_10000">CgkIxYfez5EcEAIQCg</string>
 
     <string name="leaderboard_best_score">CgkIxYfez5EcEAIQCQ</string>
 

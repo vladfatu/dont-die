@@ -1,5 +1,7 @@
 package com.tacticsgames.dontdie;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.os.Build;
@@ -37,6 +39,9 @@ public class GameActivity extends PlayServicesActivity {
     private View leftLayout;
     private int startGameCounter;
     private boolean gameOver;
+    private WeaponType killedBy;
+    private boolean killedByCeiling;
+    private boolean dead;
 
     private int bottomInPixels;
     private int passedObstacles;
@@ -66,8 +71,18 @@ public class GameActivity extends PlayServicesActivity {
 
         insultPicker = new InsultPicker();
         weaponGenerator = new WeaponGenerator();
+        updatePenguinSize();
         initialiseWeapons();
         startGame();
+    }
+
+    private void updatePenguinSize() {
+        Bitmap penguinBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.penguin);
+        int newHeight = getScreenHeight() * 12/100;
+        double ratio = (double)newHeight/penguinBitmap.getHeight();
+        int newWidth = (int) (penguinBitmap.getWidth() * ratio);
+        penguinBitmap = Bitmap.createScaledBitmap(penguinBitmap, newWidth, newHeight, true);
+        penguinImage.setImageBitmap(penguinBitmap);
     }
 
     private void setupAd() {
@@ -94,7 +109,17 @@ public class GameActivity extends PlayServicesActivity {
         return getLocalClassName();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+
     private void startGame() {
+        translateImageDownWithAnimation();
+        killedByCeiling = false;
+        killedBy = null;
+        dead = false;
         gameOverLayout.setVisibility(View.GONE);
         startGameCounterView.setVisibility(View.VISIBLE);
         rotate(penguinImage, 0);
@@ -157,12 +182,12 @@ public class GameActivity extends PlayServicesActivity {
 
     private void startWeaponAnimation(final int id) {
         Weapon weapon = weaponMap.get(id);
-        weaponGenerator.randomizeWeapon(this, weapon, getScreenWidth());
+        weaponGenerator.randomizeWeapon(this, weapon, getScreenHeight());
         rotate(weapon.getView(), 0);
         setAlpha(weapon.getView(), 255);
 
         boolean rotate = weapon.getWeaponType() == WeaponType.NINJA_STAR;
-        Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth(), rotate);
+        Animation a = new TranslateXAnimation(weapon.getView(), getScreenWidth(), rotate, weapon);
         a.setDuration(weapon.getAnimationDuration());
         a.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -237,7 +262,9 @@ public class GameActivity extends PlayServicesActivity {
     }
 
     public void onLayoutClick(View view) {
-        translateImageUpWithAnimation();
+        if (!dead) {
+            translateImageUpWithAnimation();
+        }
     }
 
     public void onRetryClicked(View view) {
@@ -251,23 +278,65 @@ public class GameActivity extends PlayServicesActivity {
         return size.x;
     }
 
+    private int getScreenHeight() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.y;
+    }
+
     private void showGameOver() {
         if (!gameOver) {
-            translateImageFallWithAnimation();
             gameOver = true;
+            dead = true;
+            translateImageFallWithAnimation();
             gameCount++;
             showInsult();
             if (gameCount % 5 == 0) {
                 showAd();
             }
-            unlockAchievement(R.string.achievement_first_blood);
             submitScoreToLeaderBoard(R.string.leaderboard_best_score, passedObstacles);
             submitEvent(R.string.event_games_played, 1);
             submitEvent(R.string.event_total_score, passedObstacles);
-            incrementAchievement(R.string.achievement_total_score_1000, passedObstacles);
+            updateAchievements();
             gameOverScore.setText(Integer.toString(passedObstacles));
             gameOverLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void updateAchievements() {
+        unlockAchievement(R.string.achievement_first_blood);
+        if (killedByCeiling) {
+            unlockAchievement(R.string.achievement_killed_by_spikes);
+        } else if (killedBy == WeaponType.KUNAI) {
+            unlockAchievement(R.string.achievement_killed_by_a_kunai);
+        } else if (killedBy == WeaponType.NINJA_STAR) {
+            unlockAchievement(R.string.achievement_killed_by_a_ninja_star);
+        }
+
+        if (passedObstacles >= 25) {
+            unlockAchievement(R.string.achievement_die_hard_25);
+        }
+        if (passedObstacles >= 50) {
+            unlockAchievement(R.string.achievement_die_hard_50);
+        }
+        if (passedObstacles >= 100) {
+            unlockAchievement(R.string.achievement_die_hard_100);
+        }
+        if (passedObstacles >= 250) {
+            unlockAchievement(R.string.achievement_die_hard_250);
+        }
+        if (passedObstacles >= 500) {
+            unlockAchievement(R.string.achievement_die_hard_500);
+        }
+        if (passedObstacles >= 1000) {
+            unlockAchievement(R.string.achievement_die_hard_1000);
+        }
+        incrementAchievement(R.string.achievement_died_50_times, 1);
+        incrementAchievement(R.string.achievement_died_100_times, 1);
+        incrementAchievement(R.string.achievement_died_1000_times, 1);
+        incrementAchievement(R.string.achievement_total_score_1000, passedObstacles);
+        incrementAchievement(R.string.achievement_total_score_10000, passedObstacles);
     }
 
     private void showInsult() {
@@ -309,6 +378,7 @@ public class GameActivity extends PlayServicesActivity {
             }
 
             if (CollisionChecker.areViewsColliding(targetView, spikesLayout, PixelConverter.getPixelsFromDp(GameActivity.this, 1))) {
+                killedByCeiling = true;
                 showGameOver();
             }
         }
@@ -316,22 +386,24 @@ public class GameActivity extends PlayServicesActivity {
 
     private class TranslateXAnimation extends Animation {
 
-        private int rightMargin;
+        private int maxRightMargin;
         private ImageView targetView;
         private boolean rotate;
+        private Weapon weapon;
 
-        public TranslateXAnimation(ImageView targetView, int rightMargin, boolean rotate) {
+        public TranslateXAnimation(ImageView targetView, int maxRightMargin, boolean rotate, Weapon weapon) {
             super();
-            this.rightMargin = rightMargin;
+            this.maxRightMargin = maxRightMargin;
             this.targetView = targetView;
             this.rotate = rotate;
+            this.weapon = weapon;
         }
 
         @Override
         protected void applyTransformation(float interpolatedTime, Transformation t) {
             if (targetView.getLeft() > PixelConverter.getPixelsFromDp(GameActivity.this, 3)) {
                 ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(targetView.getLayoutParams());
-                params.rightMargin = (int) (rightMargin * interpolatedTime);
+                params.rightMargin = (int) (maxRightMargin * interpolatedTime);
                 targetView.setLayoutParams(params);
 
                 if (rotate) {
@@ -340,6 +412,7 @@ public class GameActivity extends PlayServicesActivity {
                 }
 
                 if (CollisionChecker.areViewsColliding(penguinImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
+                    killedBy = weapon.getWeaponType();
                     showGameOver();
                 }
             }

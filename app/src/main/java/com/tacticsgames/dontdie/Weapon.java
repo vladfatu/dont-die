@@ -1,5 +1,8 @@
 package com.tacticsgames.dontdie;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
 /**
@@ -19,9 +22,17 @@ public class Weapon {
         return weaponType;
     }
 
-    public void setWeaponType(WeaponType weaponType) {
+    public void setWeaponType(Context context, WeaponType weaponType, int screenHeight) {
         this.weaponType = weaponType;
-        view.setImageResource(weaponType.getImageId());
+        view.setImageBitmap(getImageBitmap(context, weaponType, screenHeight));
+    }
+
+    private Bitmap getImageBitmap(Context context, WeaponType weaponType, int screenHeight) {
+        Bitmap weaponBitmap = BitmapFactory.decodeResource(context.getResources(), weaponType.getImageId());
+        int newHeight = (int) (screenHeight * weaponType.getHeightPercentage()/100);
+        double ratio = (double)newHeight/weaponBitmap.getHeight();
+        int newWidth = (int) (weaponBitmap.getWidth() * ratio);
+        return Bitmap.createScaledBitmap(weaponBitmap, newWidth, newHeight, true);
     }
 
     public ImageView getView() {

@@ -23,21 +23,21 @@ public class WeaponGenerator {
         return new Weapon(generateWeaponView(context));
     }
 
-    public void randomizeWeapon(Context context, Weapon weapon, int screenWidth) {
-        weapon.setWeaponType(getRandomWeaponType());
-        weapon.setAnimationDuration(getRandomDuration(context, screenWidth));
-        randomizeWeaponPosition(weapon);
+    public void randomizeWeapon(Context context, Weapon weapon, int screenHeight) {
+        weapon.setWeaponType(context, getRandomWeaponType(), screenHeight);
+        weapon.setAnimationDuration(getRandomDuration(context));
+        randomizeWeaponPosition(weapon, screenHeight);
     }
 
-    private void randomizeWeaponPosition(Weapon weapon) {
+    private void randomizeWeaponPosition(Weapon weapon, int screenHeight) {
         ViewGroup.MarginLayoutParams params = ViewGroup.MarginLayoutParams.class.cast(weapon.getView().getLayoutParams());
         params.rightMargin = 0;
-        params.bottomMargin = random.nextInt(900);
+        params.bottomMargin = random.nextInt(screenHeight*80/100);
         weapon.getView().setLayoutParams(params);
     }
 
-    private int getRandomDuration(Context context, int screenWidth) {
-        return (int) (PixelConverter.getDpFromPixels(context, screenWidth) * 10 / (1 + (random.nextFloat() * 3)));
+    private int getRandomDuration(Context context) {
+        return (int) (1000 * 10 / (1 + (random.nextFloat() * 3)));
     }
 
     private WeaponType getRandomWeaponType() {
