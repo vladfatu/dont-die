@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
@@ -30,6 +32,10 @@ public class GameActivity extends PlayServicesActivity {
     private InterstitialAd mInterstitialAd;
 
     private ImageView penguinImage;
+    private Bitmap penguinBitmap;
+    private Bitmap penguinBitmap1;
+    private Bitmap penguinBitmap2;
+    private Bitmap penguinBitmap3;
     private View spikesLayout;
     private View gameOverLayout;
     private TextView gameOverScore;
@@ -71,18 +77,29 @@ public class GameActivity extends PlayServicesActivity {
 
         insultPicker = new InsultPicker();
         weaponGenerator = new WeaponGenerator();
-        updatePenguinSize();
+        updatePenguinAnimationSizes();
+        updatePenguinToStandardImage();
         initialiseWeapons();
         startGame();
     }
 
-    private void updatePenguinSize() {
-        Bitmap penguinBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.penguin);
+    private void updatePenguinToStandardImage() {
+        penguinImage.setImageBitmap(penguinBitmap);
+    }
+
+    private void updatePenguinAnimationSizes() {
+        penguinBitmap = getScaledPenguinBitmap(R.mipmap.penguin);
+        penguinBitmap1 = getScaledPenguinBitmap(R.mipmap.penguin_1);
+        penguinBitmap2 = getScaledPenguinBitmap(R.mipmap.penguin_2);
+        penguinBitmap3 = getScaledPenguinBitmap(R.mipmap.penguin_3);
+    }
+
+    private Bitmap getScaledPenguinBitmap(int imageId) {
+        Bitmap penguinBitmap = BitmapFactory.decodeResource(getResources(), imageId);
         int newHeight = getScreenHeight() * 12/100;
         double ratio = (double)newHeight/penguinBitmap.getHeight();
         int newWidth = (int) (penguinBitmap.getWidth() * ratio);
-        penguinBitmap = Bitmap.createScaledBitmap(penguinBitmap, newWidth, newHeight, true);
-        penguinImage.setImageBitmap(penguinBitmap);
+        return Bitmap.createScaledBitmap(penguinBitmap, newWidth, newHeight, true);
     }
 
     private void setupAd() {
@@ -107,12 +124,6 @@ public class GameActivity extends PlayServicesActivity {
     @Override
     protected String getScreenName() {
         return getLocalClassName();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
     }
 
     private void startGame() {
@@ -208,7 +219,6 @@ public class GameActivity extends PlayServicesActivity {
 
             }
         });
-//        animationSet.addAnimation(a);
         weapon.getView().startAnimation(a);
 
     }
@@ -252,10 +262,35 @@ public class GameActivity extends PlayServicesActivity {
     private void translateImageDownWithAnimation() {
         Animation a = new TranslateYAnimation(penguinImage, -bottomInPixels, false);
         a.setDuration(PixelConverter.getDpFromPixels(this, bottomInPixels) * 10);
+        a.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                updatePenguinToStandardImage();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         penguinImage.startAnimation(a);
+
+        AnimationDrawable animation = new AnimationDrawable();
+        animation.setOneShot(false);
+        animation.addFrame(new BitmapDrawable(getResources(), penguinBitmap1), 50);
+        animation.addFrame(new BitmapDrawable(getResources(), penguinBitmap2), 50);
+        animation.addFrame(new BitmapDrawable(getResources(), penguinBitmap3), 50);
+        penguinImage.setImageDrawable(animation);
+        animation.start();
     }
 
     private void translateImageFallWithAnimation() {
+        updatePenguinToStandardImage();
         Animation a = new TranslateYAnimation(penguinImage, -bottomInPixels, true);
         a.setDuration(PixelConverter.getDpFromPixels(this, bottomInPixels) * 10 / 5);
         penguinImage.startAnimation(a);
@@ -275,14 +310,22 @@ public class GameActivity extends PlayServicesActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        return size.x;
+        if (size.x >= size.y) {
+            return size.x;
+        } else {
+            return size.y;
+        }
     }
 
     private int getScreenHeight() {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        return size.y;
+        if (size.y <= size.x) {
+            return size.y;
+        } else {
+            return size.x;
+        }
     }
 
     private void showGameOver() {
