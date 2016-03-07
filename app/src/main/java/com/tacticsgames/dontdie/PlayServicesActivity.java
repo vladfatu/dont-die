@@ -106,23 +106,31 @@ public abstract class PlayServicesActivity extends AppCompatActivity {
     }
 
     protected void incrementAchievement(int achievementId, int value) {
-        if (value > 0) {
-            Games.Achievements.increment(googleApiClient, getString(achievementId), value);
+        if (isSignedIn()) {
+            if (value > 0) {
+                Games.Achievements.increment(googleApiClient, getString(achievementId), value);
+            }
         }
     }
 
     protected void unlockAchievement(int achievementId) {
-        Games.Achievements.unlock(googleApiClient, getString(achievementId));
+        if (isSignedIn()) {
+            Games.Achievements.unlock(googleApiClient, getString(achievementId));
+        }
     }
 
     protected void submitScoreToLeaderBoard(int leaderBoardId, int score) {
-        Games.Leaderboards.submitScore(googleApiClient, getString(leaderBoardId),
-                score);
+        if (isSignedIn()) {
+            Games.Leaderboards.submitScore(googleApiClient, getString(leaderBoardId),
+                    score);
+        }
     }
 
     protected void submitEvent(int eventId, int value) {
-        if (value > 0) {
-            Games.Events.increment(googleApiClient, getString(eventId), value);
+        if (isSignedIn()) {
+            if (value > 0) {
+                Games.Events.increment(googleApiClient, getString(eventId), value);
+            }
         }
     }
 

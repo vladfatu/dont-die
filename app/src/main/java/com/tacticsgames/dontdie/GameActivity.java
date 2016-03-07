@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -57,6 +58,9 @@ public class GameActivity extends PlayServicesActivity {
     private InsultPicker insultPicker;
     private int gameCount;
 
+    private Penguin penguin;
+    private Spikes spikes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,12 +79,30 @@ public class GameActivity extends PlayServicesActivity {
         startGameCounterView = TextView.class.cast(findViewById(R.id.startGameCounter));
         leftLayout = findViewById(R.id.leftLayout);
 
+        penguin = new Penguin(penguinImage);
+        spikes = new Spikes(spikesLayout);
         insultPicker = new InsultPicker();
         weaponGenerator = new WeaponGenerator();
+        initialiseGameLayout();
         updatePenguinAnimationSizes();
         updatePenguinToStandardImage();
         initialiseWeapons();
         startGame();
+    }
+
+    public void initialiseGameLayout() {
+        gameLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    if (!dead) {
+                        translateImageUpWithAnimation();
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void updatePenguinToStandardImage() {
@@ -296,12 +318,6 @@ public class GameActivity extends PlayServicesActivity {
         penguinImage.startAnimation(a);
     }
 
-    public void onLayoutClick(View view) {
-        if (!dead) {
-            translateImageUpWithAnimation();
-        }
-    }
-
     public void onRetryClicked(View view) {
         startGame();
     }
@@ -420,7 +436,7 @@ public class GameActivity extends PlayServicesActivity {
                 rotate(targetView, angle);
             }
 
-            if (CollisionChecker.areViewsColliding(targetView, spikesLayout, PixelConverter.getPixelsFromDp(GameActivity.this, 1))) {
+            if (CollisionChecker.areViewsColliding(penguin, spikes)) {
                 killedByCeiling = true;
                 showGameOver();
             }
@@ -454,7 +470,7 @@ public class GameActivity extends PlayServicesActivity {
                     rotate(targetView, angle);
                 }
 
-                if (CollisionChecker.areViewsColliding(penguinImage, targetView, PixelConverter.getPixelsFromDp(GameActivity.this, 5))) {
+                if (CollisionChecker.areViewsColliding(penguin, weapon)) {
                     killedBy = weapon.getWeaponType();
                     showGameOver();
                 }

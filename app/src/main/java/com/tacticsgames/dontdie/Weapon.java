@@ -8,7 +8,7 @@ import android.widget.ImageView;
 /**
  * Created by vladfatu on 23/02/2016.
  */
-public class Weapon {
+public class Weapon implements Collidable{
 
     private WeaponType weaponType;
     private ImageView view;
@@ -35,6 +35,17 @@ public class Weapon {
         return Bitmap.createScaledBitmap(weaponBitmap, newWidth, newHeight, true);
     }
 
+    @Override
+    public double getWidthDeductionPercentage() {
+        return weaponType.getWidthDeductionPercentage();
+    }
+
+    @Override
+    public double getHeightDeductionPercentage() {
+        return weaponType.getHeightDeductionPercentage();
+    }
+
+    @Override
     public ImageView getView() {
         return view;
     }
