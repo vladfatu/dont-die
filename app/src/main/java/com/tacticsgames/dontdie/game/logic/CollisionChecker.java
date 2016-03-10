@@ -1,7 +1,8 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.game.logic;
 
 import android.graphics.Rect;
-import android.view.View;
+
+import com.tacticsgames.dontdie.game.model.Collidable;
 
 public class CollisionChecker {
 

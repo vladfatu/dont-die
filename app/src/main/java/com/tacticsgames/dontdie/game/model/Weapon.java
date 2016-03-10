@@ -1,4 +1,4 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.game.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,7 @@ import android.widget.ImageView;
 /**
  * Created by vladfatu on 23/02/2016.
  */
-public class Weapon implements Collidable{
+public class Weapon implements Collidable {
 
     private WeaponType weaponType;
     private ImageView view;

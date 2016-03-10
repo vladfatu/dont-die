@@ -1,4 +1,6 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.game.logic;
+
+import com.tacticsgames.dontdie.R;
 
 import java.util.Random;
 

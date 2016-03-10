@@ -1,4 +1,4 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.activities;
 
 import android.app.Application;
 

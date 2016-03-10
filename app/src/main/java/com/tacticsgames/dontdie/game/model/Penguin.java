@@ -1,19 +1,20 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.game.model;
 
 import android.view.View;
+import android.widget.ImageView;
 
 /**
  * Created by Vlad on 07-Mar-16.
  */
-public class Penguin implements Collidable{
+public class Penguin implements Collidable {
 
     private final static double PENGUIN_WIDTH_DEDUCTION_PERCENTAGE = 25;
     private final static double PENGUIN_HEIGHT_DEDUCTION_PERCENTAGE = 15;
 
-    private View view;
+    private ImageView penguinImage;
 
-    public Penguin(View view) {
-        this.view = view;
+    public Penguin(ImageView imageView) {
+        this.penguinImage = imageView;
     }
 
     @Override
@@ -28,7 +29,11 @@ public class Penguin implements Collidable{
 
     @Override
     public View getView() {
-        return view;
+        return penguinImage;
+    }
+
+    public ImageView getImageView () {
+        return penguinImage;
     }
 
 }

@@ -1,4 +1,6 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.game.model;
+
+import com.tacticsgames.dontdie.R;
 
 /**
  * Created by vladfatu on 23/02/2016.

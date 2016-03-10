@@ -1,4 +1,4 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.plus.Plus;
 import com.google.example.games.basegameutils.BaseGameUtils;
+import com.tacticsgames.dontdie.R;
 
 /**
  * Created by Vlad on 21-Feb-16.

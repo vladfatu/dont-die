@@ -1,4 +1,4 @@
-package com.tacticsgames.dontdie;
+package com.tacticsgames.dontdie.game.model;
 
 import android.view.View;
 
