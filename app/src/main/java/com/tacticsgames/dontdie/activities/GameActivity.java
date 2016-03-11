@@ -19,6 +19,7 @@ import com.tacticsgames.dontdie.game.model.Weapon;
 import com.tacticsgames.dontdie.game.logic.WeaponGenerator;
 import com.tacticsgames.dontdie.game.model.WeaponType;
 import com.tacticsgames.dontdie.renderer.PenguinRenderer;
+import com.tacticsgames.dontdie.renderer.TutorialRenderer;
 import com.tacticsgames.dontdie.renderer.WeaponRenderer;
 
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public class GameActivity extends PlayServicesActivity {
     private CounterRenderer counterRenderer;
     private WeaponRenderer weaponRenderer;
     private AdRenderer adRenderer;
+    private TutorialRenderer tutorialRenderer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,7 @@ public class GameActivity extends PlayServicesActivity {
         initialiseGameLogic();
         initialiseGameLayout();
         initialiseWeapons();
-        startGame();
+        tutorialRenderer.startTutorial();
     }
 
     private void initialiseLayouts() {
@@ -76,6 +78,7 @@ public class GameActivity extends PlayServicesActivity {
         Spikes spikes = new Spikes(findViewById(R.id.spikesLayout));
         penguinRenderer = new PenguinRenderer(this, penguin, spikes, new GamePenguinRendererListener());
         weaponRenderer = new WeaponRenderer(this, penguin, new GameWeaponRendererListener());
+        tutorialRenderer = new TutorialRenderer(this, new GameTutorialRendererListener());
     }
 
     private void initialiseGameLogic() {
@@ -228,6 +231,14 @@ public class GameActivity extends PlayServicesActivity {
         public void onWeaponCollidedWithPenguin(Weapon weapon) {
             gameInfo.setKilledBy(weapon.getWeaponType());
             showGameOver();
+        }
+    }
+
+    private class GameTutorialRendererListener implements TutorialRenderer.TutorialRendererListener {
+
+        @Override
+        public void onTutorialFinished() {
+            startGame();
         }
     }
 
