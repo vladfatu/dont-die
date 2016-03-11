@@ -1,21 +1,27 @@
 package com.tacticsgames.dontdie.renderer;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.tacticsgames.dontdie.R;
+import com.tacticsgames.dontdie.persister.GamePersister;
 
 /**
  * Created by Vlad on 10-Mar-16.
  */
 public class TutorialRenderer {
 
+    private static final String TUTORIAL_PREFERENCE = "TUTORIAL_PREFERENCE";
+
     private Activity activity;
     private TutorialRendererListener tutorialRendererListener;
 
+    private GamePersister gamePersister;
     private int tutorialPage;
 
     private RelativeLayout tutorialLayout;
@@ -28,6 +34,7 @@ public class TutorialRenderer {
         this.activity = activity;
         this.tutorialRendererListener = tutorialRendererListener;
         tutorialPage = 1;
+        gamePersister = new GamePersister(activity);
         initialiseViews();
         initialiseClickListeners();
     }
@@ -62,7 +69,20 @@ public class TutorialRenderer {
     }
 
     public void startTutorial() {
-        tutorialLayout.setVisibility(View.VISIBLE);
+        if (!wasTutorialAlreadyShown()) {
+            tutorialLayout.setVisibility(View.VISIBLE);
+            persistTutorialShown();
+        } else {
+            tutorialRendererListener.onTutorialFinished();
+        }
+    }
+
+    private boolean wasTutorialAlreadyShown() {
+        return gamePersister.getPersistedBoolean(TUTORIAL_PREFERENCE, false);
+    }
+
+    private void persistTutorialShown() {
+        gamePersister.persistBoolean(TUTORIAL_PREFERENCE, true);
     }
 
     private void onTutorialNextButtonClicked() {
