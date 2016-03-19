@@ -62,6 +62,15 @@ public class GameActivity extends PlayServicesActivity {
         tutorialRenderer.startTutorial();
     }
 
+    @Override
+    protected void onPause() {
+        if (!gameInfo.isGameOver()) {
+            gameInfo.setKilledBy(WeaponType.KUNAI);
+            showGameOver();
+        }
+        super.onPause();
+    }
+
     private void initialiseLayouts() {
         gameLayout = RelativeLayout.class.cast(findViewById(R.id.game_content));
         penguinImage = ImageView.class.cast(findViewById(R.id.circleImage));

@@ -2,6 +2,7 @@ package com.tacticsgames.dontdie.renderer;
 
 import android.app.Activity;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.tacticsgames.dontdie.R;
@@ -23,6 +24,12 @@ public class AdRenderer {
     private void setupAd() {
         mInterstitialAd = new InterstitialAd(activity);
         mInterstitialAd.setAdUnitId(activity.getResources().getString(R.string.interstitial_ad_unit_id));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+            }
+        });
     }
 
     private void requestNewInterstitial() {
@@ -36,7 +43,6 @@ public class AdRenderer {
 
     public void showAd() {
         mInterstitialAd.show();
-        requestNewInterstitial();
     }
 
 }
