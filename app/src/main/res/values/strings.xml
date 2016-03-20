@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Don\'t Die</string>
 
-    <string name="interstitial_ad_unit_id">ca-app-pub-4668622539935763/9955792338</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-4668622539935763/8085545532</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="game_over">Game Over!</string>

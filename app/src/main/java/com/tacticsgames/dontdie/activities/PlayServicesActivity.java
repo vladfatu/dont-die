@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -138,13 +137,11 @@ public abstract class PlayServicesActivity extends AppCompatActivity {
     private class StickConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks {
         @Override
         public void onConnected(Bundle bundle) {
-            Toast.makeText(PlayServicesActivity.this, "onConnected", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnected(): connected to Google APIs");
         }
 
         @Override
         public void onConnectionSuspended(int i) {
-            Toast.makeText(PlayServicesActivity.this, "onConnectionSuspended", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnectionSuspended(): attempting to reconnect");
             googleApiClient.connect();
         }
@@ -153,7 +150,6 @@ public abstract class PlayServicesActivity extends AppCompatActivity {
     private class StickOnConnectionFailedListener implements GoogleApiClient.OnConnectionFailedListener {
         @Override
         public void onConnectionFailed(ConnectionResult connectionResult) {
-            Toast.makeText(PlayServicesActivity.this, "onConnectionFailed", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "onConnectionFailed(): attempting to resolve");
             if (resolvingConnectionFailure) {
                 Log.d(TAG, "onConnectionFailed(): already resolving, ignoring");
@@ -162,7 +158,7 @@ public abstract class PlayServicesActivity extends AppCompatActivity {
 
             autoStartSignInFlow = false;
             resolvingConnectionFailure = true;
-            if (!BaseGameUtils.resolveConnectionFailure(PlayServicesActivity.this, googleApiClient, connectionResult,
+            if (PlayServicesActivity.this instanceof MenuActivity && !BaseGameUtils.resolveConnectionFailure(PlayServicesActivity.this, googleApiClient, connectionResult,
                     RC_SIGN_IN, getString(R.string.signin_other_error))) {
                 resolvingConnectionFailure = false;
             }
