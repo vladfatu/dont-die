@@ -87,19 +87,23 @@ public class TutorialRenderer {
 
     private void onTutorialNextButtonClicked() {
         if (tutorialPage < 2) {
+            tutorialRendererListener.onNext1Clicked();
             tutorialPage++;
             tutorialBackground.setImageResource(R.mipmap.tutorial_chalkboard_second);
         } else {
+            tutorialRendererListener.onNext2Clicked();
             tutorialBackground.setImageResource(R.mipmap.tutorial_chalkboard_third);
             showStartButton();
         }
     }
 
     private void onTutorialSkipButtonClicked() {
+        tutorialRendererListener.onSkipClicked();
         closeTutorial();
     }
 
     private void onTutorialStartButtonClicked() {
+        tutorialRendererListener.onStartClicked();
         closeTutorial();
     }
 
@@ -116,5 +120,13 @@ public class TutorialRenderer {
 
     public interface TutorialRendererListener {
         void onTutorialFinished();
+
+        void onNext1Clicked();
+
+        void onNext2Clicked();
+
+        void onSkipClicked();
+
+        void onStartClicked();
     }
 }

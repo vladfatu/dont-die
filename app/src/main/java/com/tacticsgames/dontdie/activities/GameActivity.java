@@ -64,7 +64,7 @@ public class GameActivity extends PlayServicesActivity {
 
     @Override
     protected void onPause() {
-        if (!gameInfo.isGameOver()) {
+        if (!gameInfo.isGameOver() && !isFinishing()) {
             gameInfo.setKilledBy(WeaponType.KUNAI);
             showGameOver();
         }
@@ -148,6 +148,7 @@ public class GameActivity extends PlayServicesActivity {
     }
 
     public void onRetryClicked(View view) {
+        sendAnalyticsEvent(R.string.analytics_category_action, R.string.analytics_event_retry);
         startGame();
     }
 
@@ -248,6 +249,26 @@ public class GameActivity extends PlayServicesActivity {
         @Override
         public void onTutorialFinished() {
             startGame();
+        }
+
+        @Override
+        public void onNext1Clicked() {
+            sendAnalyticsEvent(R.string.analytics_category_action, R.string.analytics_event_tutorial_next1);
+        }
+
+        @Override
+        public void onNext2Clicked() {
+            sendAnalyticsEvent(R.string.analytics_category_action, R.string.analytics_event_tutorial_next2);
+        }
+
+        @Override
+        public void onSkipClicked() {
+            sendAnalyticsEvent(R.string.analytics_category_action, R.string.analytics_event_tutorial_skip);
+        }
+
+        @Override
+        public void onStartClicked() {
+            sendAnalyticsEvent(R.string.analytics_category_action, R.string.analytics_event_tutorial_start);
         }
     }
 

@@ -3,36 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:background="@mipmap/menu_activity_background"
     tools:context="com.tacticsgames.dontstickaround.MenuActivity">
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_game"
+        android:background="@drawable/start_game_selector"
         android:id="@+id/startGameButton"
         android:onClick="onStartGameClicked"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp" />
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/view_leader_board"
+        android:background="@mipmap/button_leaderboard"
         android:id="@+id/viewLeaderBoardButton"
         android:onClick="onViewLeaderBoardClicked"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginLeft="-10dp"
+        android:layout_marginBottom="-35dp"
+        android:layout_above="@id/startGameButton"
+        android:layout_toRightOf="@id/startGameButton"/>
 
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/view_achievements"
+        android:background="@mipmap/button_achievements"
         android:id="@+id/viewAchievementsButton"
         android:onClick="onViewAchievementsClicked"
-        android:layout_marginTop="59dp"
-        android:layout_below="@+id/viewLeaderBoardButton"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginRight="-10dp"
+        android:layout_marginBottom="-35dp"
+        android:layout_above="@id/startGameButton"
+        android:layout_toLeftOf="@id/startGameButton" />
 
 </RelativeLayout>

@@ -31,4 +31,9 @@
     <string name="analytics_event_view_achievements_failed">ViewAchievementsFailed</string>
     <string name="analytics_event_view_leaderboards">ViewLeaderBoards</string>
     <string name="analytics_event_view_leaderboards_failed">ViewLeaderBoardsFailed</string>
+    <string name="analytics_event_retry">Retry</string>
+    <string name="analytics_event_tutorial_skip">TutorialSkip</string>
+    <string name="analytics_event_tutorial_next1">TutorialNext1</string>
+    <string name="analytics_event_tutorial_next2">TutorialNext2</string>
+    <string name="analytics_event_tutorial_start">TutorialStart</string>
 </resources>
