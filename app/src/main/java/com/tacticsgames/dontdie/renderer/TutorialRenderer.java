@@ -73,7 +73,7 @@ public class TutorialRenderer {
             tutorialLayout.setVisibility(View.VISIBLE);
             persistTutorialShown();
         } else {
-            tutorialRendererListener.onTutorialFinished();
+            tutorialRendererListener.onTutorialFinished(false);
         }
     }
 
@@ -115,11 +115,11 @@ public class TutorialRenderer {
 
     private void closeTutorial() {
         tutorialLayout.setVisibility(View.GONE);
-        tutorialRendererListener.onTutorialFinished();
+        tutorialRendererListener.onTutorialFinished(true);
     }
 
     public interface TutorialRendererListener {
-        void onTutorialFinished();
+        void onTutorialFinished(boolean closed);
 
         void onNext1Clicked();
 

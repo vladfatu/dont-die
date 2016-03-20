@@ -7,6 +7,5 @@
     <string name="insult_0">Were you not paying attention during the tutorial? You are NOT supposed to hit the ceiling. Ceiling is "BAD"!</string>
     <string name="insult_1">What was that? Were you trying to catch the weapon? Don\'t try to catch the weapon! You need to dodge it!</string>
     <string name="insult_2">I thought you would know by now. If you touch anything sharp you will die. Stay away from sharp objects!</string>
-    <string name="insult_3">COME ON! Donald Trump\'s conscience could play this game better than you!</string>
-    <string name="insult_4">REALLY? After all these games and you get killed by the first weapon? How can you be so bad at this?</string>
+    <string name="insult_3">You died! Again!</string>
 </resources>

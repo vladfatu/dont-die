@@ -14,9 +14,9 @@ public class CollisionChecker {
         heightOffset = getHeightOffset(collidable2);
         Rect rect2 = new Rect(collidable2.getView().getLeft() + widthOffset, collidable2.getView().getTop() + heightOffset, collidable2.getView().getRight() - widthOffset, collidable2.getView().getBottom() - heightOffset);
         if (rect1.intersect(rect2)) {
-            System.out.println("Game Over!");
-            System.out.println("rect1: " + rect1.toString());
-            System.out.println("rect2: " + rect2.toString());
+//            System.out.println("Game Over!");
+//            System.out.println("rect1: " + rect1.toString());
+//            System.out.println("rect2: " + rect2.toString());
             return true;
         } else {
             return false;

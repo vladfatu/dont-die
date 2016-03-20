@@ -1,6 +1,7 @@
 package com.tacticsgames.dontdie.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -154,6 +155,7 @@ public class GameActivity extends PlayServicesActivity {
 
     private void showGameOver() {
         if (!gameInfo.isGameOver()) {
+            long timestamp = System.currentTimeMillis();
             gameInfo.setGameOver(true);
             gameInfo.setDead(true);
             penguinRenderer.translateImageFallWithAnimation();
@@ -162,12 +164,11 @@ public class GameActivity extends PlayServicesActivity {
             if (gameCount % 5 == 0) {
                 adRenderer.showAd();
             }
-            submitScoreToLeaderBoard(R.string.leaderboard_best_score, gameInfo.getScore());
-            submitEvent(R.string.event_games_played, 1);
-            submitEvent(R.string.event_total_score, gameInfo.getScore());
-            updateAchievements();
             gameOverScore.setText(Integer.toString(gameInfo.getScore()));
             gameOverLayout.setVisibility(View.VISIBLE);
+            Thread thread = new Thread(new AchievementsAndEventsRunnable());
+            thread.start();
+            System.out.println("Game Over before ad took: " + (System.currentTimeMillis() - timestamp));
         }
     }
 
@@ -247,7 +248,10 @@ public class GameActivity extends PlayServicesActivity {
     private class GameTutorialRendererListener implements TutorialRenderer.TutorialRendererListener {
 
         @Override
-        public void onTutorialFinished() {
+        public void onTutorialFinished(boolean closed) {
+            if (!closed) {
+                gameCount = 5;
+            }
             startGame();
         }
 
@@ -272,4 +276,13 @@ public class GameActivity extends PlayServicesActivity {
         }
     }
 
+    private class AchievementsAndEventsRunnable implements Runnable {
+        @Override
+        public void run() {
+            submitScoreToLeaderBoard(R.string.leaderboard_best_score, gameInfo.getScore());
+            submitEvent(R.string.event_games_played, 1);
+            submitEvent(R.string.event_total_score, gameInfo.getScore());
+            updateAchievements();
+        }
+    }
 }
