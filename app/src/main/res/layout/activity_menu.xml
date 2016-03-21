@@ -20,7 +20,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@mipmap/button_leaderboard"
+        android:background="@drawable/leaderboard_selector"
         android:id="@+id/viewLeaderBoardButton"
         android:onClick="onViewLeaderBoardClicked"
         android:layout_marginLeft="-10dp"
@@ -31,7 +31,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@mipmap/button_achievements"
+        android:background="@drawable/achievements_selector"
         android:id="@+id/viewAchievementsButton"
         android:onClick="onViewAchievementsClicked"
         android:layout_marginRight="-10dp"

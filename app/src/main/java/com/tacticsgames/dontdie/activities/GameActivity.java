@@ -1,5 +1,6 @@
 package com.tacticsgames.dontdie.activities;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -13,6 +14,7 @@ import com.tacticsgames.dontdie.game.model.GameInfo;
 import com.tacticsgames.dontdie.game.model.Penguin;
 import com.tacticsgames.dontdie.renderer.AdRenderer;
 import com.tacticsgames.dontdie.renderer.CounterRenderer;
+import com.tacticsgames.dontdie.renderer.FontCache;
 import com.tacticsgames.dontdie.renderer.ImageViewRenderer;
 import com.tacticsgames.dontdie.R;
 import com.tacticsgames.dontdie.game.model.Spikes;
@@ -79,6 +81,10 @@ public class GameActivity extends PlayServicesActivity {
         gameOverScore = TextView.class.cast(findViewById(R.id.gameOverScore));
         gameOverMessage = TextView.class.cast(findViewById(R.id.gameOverMessage));
         leftLayout = findViewById(R.id.leftLayout);
+
+        Typeface font = FontCache.get("Franks.ttf", this);
+        gameOverScore.setTypeface(font);
+        gameOverMessage.setTypeface(font);
     }
 
     private void initialiseRenderers() {

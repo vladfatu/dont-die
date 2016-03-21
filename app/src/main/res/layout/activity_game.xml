@@ -43,51 +43,76 @@
 
     <RelativeLayout
         android:id="@+id/gameOverLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="visible">
 
-        <TextView
-            android:id="@+id/gameOverText"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/game_over"
-            android:textSize="70dp"
-            android:layout_marginTop="50dp"
-            android:layout_centerHorizontal="true" />
+            android:id="@+id/gameOverBackground"
+            android:background="@mipmap/game_over_background"/>
 
-        <TextView
-            android:id="@+id/gameOverMessage"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:gravity="center"
-            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/gameOverText"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"/>
+            android:id="@+id/gameOverTitle"
+            android:layout_marginTop="35dp"
+            android:src="@mipmap/game_over_title"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/retry_selector"
+            android:id="@+id/retryButton"
+            android:onClick="onRetryClicked"
+            android:layout_marginBottom="30dp"
+            android:layout_alignBottom="@id/gameOverBackground"
+            android:layout_centerHorizontal="true"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/scoreBackground"
+            android:layout_marginBottom="10dp"
+            android:layout_above="@id/retryButton"
+            android:layout_centerHorizontal="true"
+            android:background="@mipmap/score_background"/>
 
         <TextView
             android:id="@+id/gameOverScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="40dp"
+            android:textColor="#ffe139"
+            android:textSize="20dp"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:layout_below="@id/gameOverMessage"
-            android:layout_marginTop="10dp"/>
+            android:gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="10dp"
+            android:layout_alignLeft="@id/gameOverBackground"
+            android:layout_alignRight="@id/gameOverBackground"
+            android:layout_alignBottom="@id/scoreBackground"/>
 
-        <Button
+        <TextView
+            android:id="@+id/gameOverMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/retry"
-            android:id="@+id/button"
-            android:onClick="onRetryClicked"
-            android:layout_below="@+id/gameOverScore"
+            android:textColor="#0a5269"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/gameOverTitle"
             android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true" />
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_alignLeft="@id/gameOverBackground"
+            android:layout_alignRight="@id/gameOverBackground"
+            android:layout_above="@id/scoreBackground"/>
 
     </RelativeLayout>
 
