@@ -34,8 +34,8 @@ public class AdRenderer {
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("A9A71D5CD236AB4E5565199A22CB660D")
-                .addTestDevice("9C9C6C29924B4A4870047BD11841E1AF")
+//                .addTestDevice("A9A71D5CD236AB4E5565199A22CB660D")
+//                .addTestDevice("9C9C6C29924B4A4870047BD11841E1AF")
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
